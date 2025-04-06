@@ -8,7 +8,7 @@ services:
         volumes:
             - ./api_service:/app
         environment:
-            - ENV=development # Используем development среду по умолчанию
+            - ENV=development
         networks:
             - analyzer-network
         depends_on:
@@ -22,12 +22,12 @@ services:
             - "8080"
         volumes:
             - ./runner_service:/app
-            - /var/run/docker.sock:/var/run/docker.sock # Для возможности запуска Docker внутри контейнера
+            - /var/run/docker.sock:/var/run/docker.sock
         environment:
-            - ENV=development # Используем development среду по умолчанию
+            - ENV=development
         networks:
             - analyzer-network
-        privileged: true # Для системных операций (установка пакетов, запуск Go)
+        privileged: true
 
     frontend:
         build:

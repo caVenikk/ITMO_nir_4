@@ -35,4 +35,10 @@ export interface CancelTaskResponse {
     message: string;
 }
 
-export type TaskStatus = "pending" | "running" | "completed" | "failed" | "cancelled" | "data_already_retrieved";
+export type TaskStatus =
+    | "pending"
+    | "running"
+    | "completed"
+    | "failed"
+    | "cancelled"
+    | "data_already_retrieved";

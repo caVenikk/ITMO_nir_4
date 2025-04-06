@@ -61,13 +61,13 @@
               variant="tonal"
               class="mb-4"
             >
-              Анализ успешно завершен с {{ metricsData.length }} точками данных.
+              Анализ успешно завершен. Собрано {{ metricsData.length }} записей.
             </v-alert>
 
             <v-table density="compact">
               <thead>
                 <tr>
-                  <th>Инструмент</th>
+                  <th>Анализатор</th>
                   <th>Ср. время выполнения (с)</th>
                   <th>Ср. загрузка ЦП (%)</th>
                   <th>Ср. использование памяти (КБ)</th>
@@ -99,7 +99,7 @@
               variant="tonal"
               class="mb-4"
             >
-              Исходные данные метрик для всех инструментов и итераций
+              Исходные данные метрик для всех анализаторов
             </v-alert>
 
             <v-data-table
@@ -134,70 +134,70 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import Papa from "papaparse";
-import { aggregateMetricsByTool, type MetricsData } from "@/services/csvService";
-import MetricsCharts from "@/components/charts/MetricsCharts.vue";
+    import { ref, computed } from "vue";
+    import Papa from "papaparse";
+    import { aggregateMetricsByTool, type MetricsData } from "@/services/csvService";
+    import MetricsCharts from "@/components/charts/MetricsCharts.vue";
 
-const props = defineProps<{
-    metricsData: MetricsData[];
-    taskId?: string;
-    errorMessage?: string | null;
-}>();
+    const props = defineProps<{
+        metricsData: MetricsData[];
+        taskId?: string;
+        errorMessage?: string | null;
+    }>();
 
-const emit = defineEmits<{
-    (e: "reset"): void;
-}>();
+    const emit = defineEmits<{
+        (e: "reset"): void;
+    }>();
 
-// Локальное состояние
-const activeTab = ref("summary");
+    // Локальное состояние
+    const activeTab = ref("summary");
 
-// Заголовки таблицы
-const tableHeaders = [
-    { title: "Инструмент", key: "Tool" },
-    { title: "Время выполнения (с)", key: "Execution Time (s)" },
-    { title: "Использование ЦП (%)", key: "CPU Used (%)" },
-    { title: "Использование памяти (КБ)", key: "Memory Used (KB)" },
-];
+    // Заголовки таблицы
+    const tableHeaders = [
+        { title: "Анализатор", key: "Tool" },
+        { title: "Время выполнения (с)", key: "Execution Time (s)" },
+        { title: "Использование ЦП (%)", key: "CPU Used (%)" },
+        { title: "Использование памяти (КБ)", key: "Memory Used (KB)" },
+    ];
 
-// Вычисляемые свойства
-const aggregatedData = computed(() => {
-    if (props.metricsData.length === 0) {
-        return {};
+    // Вычисляемые свойства
+    const aggregatedData = computed(() => {
+        if (props.metricsData.length === 0) {
+            return {};
+        }
+        return aggregateMetricsByTool(props.metricsData);
+    });
+
+    // Методы
+    function downloadCSV() {
+        if (!props.taskId || props.metricsData.length === 0) return;
+
+        const csvData = props.metricsData;
+        const csv = Papa.unparse(csvData);
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `metrics_${props.taskId}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
     }
-    return aggregateMetricsByTool(props.metricsData);
-});
 
-// Методы
-function downloadCSV() {
-    if (!props.taskId || props.metricsData.length === 0) return;
-
-    const csvData = props.metricsData;
-    const csv = Papa.unparse(csvData);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `metrics_${props.taskId}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-}
-
-function resetResults() {
-    emit("reset");
-}
+    function resetResults() {
+        emit("reset");
+    }
 </script>
 
 <style lang="scss" scoped>
-.analysis-results {
-    margin-bottom: 2rem;
-}
+    .analysis-results {
+        margin-bottom: 2rem;
+    }
 
-.error-container {
-    min-height: 100px;
-    display: flex;
-    align-items: center;
-}
+    .error-container {
+        min-height: 100px;
+        display: flex;
+        align-items: center;
+    }
 </style>

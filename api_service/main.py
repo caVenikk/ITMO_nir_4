@@ -12,7 +12,7 @@ from db.database import close_db_connection, create_tables
 settings = get_settings()
 
 
-# Создаем контекстный менеджер для событий запуска/остановки
+# Контекстный менеджер для событий запуска/остановки
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Создаем таблицы
@@ -43,7 +43,7 @@ app.add_middleware(
 
 # Регистрация маршрутов
 app.include_router(api_router, prefix="/api/v1")
-app.include_router(internal_router, prefix="/api/v1")  # Добавляем внутренний маршрут
+app.include_router(internal_router, prefix="/api/v1")
 
 
 # Эндпоинт для проверки состояния

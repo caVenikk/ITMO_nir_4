@@ -9,6 +9,12 @@
 //   $color-pack: false
 // );
 
+// Настройки Vuetify
+@use "vuetify/settings";
+
+// Импортируем стили для мобильных устройств
+@use "./mobile.scss";
+
 /* Стили для ApexCharts, чтобы текст был виден в темной и светлой темах */
 .apexcharts-text tspan,
 .apexcharts-title-text,
@@ -87,4 +93,31 @@
 
 .apexcharts-boxPlot-series .apexcharts-boxPlot-median {
     stroke-width: 2.5px !important;
+}
+
+.card-title {
+    display: block;
+    flex: none;
+    font-size: 1.25rem;
+    font-weight: 500;
+    hyphens: auto;
+    letter-spacing: 0.0125em;
+    min-width: 0;
+    padding: 0.5rem 1rem;
+    text-transform: none;
+    word-break: normal;
+    word-wrap: break-word;
+}
+
+.card-subtitle {
+    display: block;
+    flex: none;
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.0178571429em;
+    opacity: var(--v-card-subtitle-opacity, var(--v-medium-emphasis-opacity));
+    overflow: hidden;
+    padding: 0 1rem;
+    text-overflow: ellipsis;
+    text-transform: none;
 }

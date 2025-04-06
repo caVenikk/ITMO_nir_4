@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-print("os.environ.get('ENV')", os.environ.get("ENV"))
-
 
 class Settings(BaseSettings):
     # Основные настройки

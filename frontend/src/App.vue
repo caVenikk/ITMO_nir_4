@@ -4,11 +4,11 @@
       color="primary"
       app
     >
-      <v-app-bar-title>Метрики анализаторов Python-кода</v-app-bar-title>
+      <span class="app-title">Анализ производительности статических анализаторов кода</span>
       <v-spacer />
       <v-btn
         icon
-        href="https://github.com"
+        href="https://github.com/caVenikk/ITMO_nir_4"
         target="_blank"
       >
         <v-icon>mdi-github</v-icon>
@@ -18,23 +18,25 @@
     <v-main>
       <router-view />
     </v-main>
-
-    <v-footer
-      app
-      class="text-center"
-    >
-      <span>&copy; {{ new Date().getFullYear() }} - Метрики анализаторов Python-кода</span>
-    </v-footer>
   </v-app>
 </template>
 
 <script lang="ts" setup>
-//
+    //
 </script>
 
 <style lang="scss">
-html,
-body {
-    overflow-y: auto;
-}
+    html,
+    body {
+        overflow-y: auto;
+    }
+
+    .app-title {
+        margin-left: 20px;
+        font-size: 1.25rem;
+        font-weight: 400;
+        letter-spacing: 0;
+        line-height: 1.75rem;
+        text-transform: none;
+    }
 </style>

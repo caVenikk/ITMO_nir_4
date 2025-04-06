@@ -18,7 +18,10 @@ export function isValidGithubUrl(url: string): boolean {
  * Creates a debounced function that delays invoking func until after wait milliseconds
  * have elapsed since the last time the debounced function was invoked.
  */
-export function debounce<T extends unknown[], R>(func: (...args: T) => R, wait: number): (...args: T) => void {
+export function debounce<T extends unknown[], R>(
+    func: (...args: T) => R,
+    wait: number,
+): (...args: T) => void {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
     return function (...args: T): void {

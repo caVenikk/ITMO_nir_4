@@ -40,7 +40,8 @@ export const useAnalyzerStore = defineStore("analyzer", () => {
             packages.value = response.packages;
         } catch (error) {
             console.error("Failed to search packages:", error);
-            errorMessage.value = error instanceof Error ? error.message : "Failed to search packages";
+            errorMessage.value =
+                error instanceof Error ? error.message : "Failed to search packages";
             packages.value = [];
         } finally {
             isSearching.value = false;
@@ -60,7 +61,8 @@ export const useAnalyzerStore = defineStore("analyzer", () => {
             startPolling(response.task_id);
         } catch (error) {
             console.error("Failed to start analysis:", error);
-            errorMessage.value = error instanceof Error ? error.message : "Failed to start analysis";
+            errorMessage.value =
+                error instanceof Error ? error.message : "Failed to start analysis";
         } finally {
             isLoading.value = false;
         }
@@ -83,7 +85,8 @@ export const useAnalyzerStore = defineStore("analyzer", () => {
             }
         } catch (error) {
             console.error("Failed to check task status:", error);
-            errorMessage.value = error instanceof Error ? error.message : "Failed to check task status";
+            errorMessage.value =
+                error instanceof Error ? error.message : "Failed to check task status";
             stopPolling();
         }
     }
@@ -114,7 +117,8 @@ export const useAnalyzerStore = defineStore("analyzer", () => {
             return blob;
         } catch (error) {
             console.error("Failed to download metrics:", error);
-            errorMessage.value = error instanceof Error ? error.message : "Failed to download metrics";
+            errorMessage.value =
+                error instanceof Error ? error.message : "Failed to download metrics";
             return null;
         } finally {
             isLoading.value = false;

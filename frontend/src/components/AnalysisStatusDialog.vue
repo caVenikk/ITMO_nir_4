@@ -22,7 +22,7 @@
             size="64"
           />
           <p class="mt-4">
-            Анализируем код... Пожалуйста, подождите.
+            Анализ кода... Пожалуйста, подождите.
           </p>
           <p class="text-caption">
             ID задачи: {{ taskId }}
@@ -110,33 +110,33 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+    import { computed } from "vue";
 
-const props = defineProps<{
-    modelValue: boolean;
-    status: string | null;
-    taskId?: string;
-    isDownloading: boolean;
-    downloadError: string | null;
-}>();
+    const props = defineProps<{
+        modelValue: boolean;
+        status: string | null;
+        taskId?: string;
+        isDownloading: boolean;
+        downloadError: string | null;
+    }>();
 
-defineEmits<{
-    (e: "update:modelValue", value: boolean): void;
-    (e: "close"): void;
-    (e: "cancel"): void;
-    (e: "retry"): void;
-}>();
+    defineEmits<{
+        (e: "update:modelValue", value: boolean): void;
+        (e: "close"): void;
+        (e: "cancel"): void;
+        (e: "retry"): void;
+    }>();
 
-// Вычисляемые свойства
-const isRunning = computed(() => {
-    return props.status === "pending" || props.status === "running";
-});
+    // Вычисляемые свойства
+    const isRunning = computed(() => {
+        return props.status === "pending" || props.status === "running";
+    });
 
-const canCancel = computed(() => {
-    return isRunning.value;
-});
+    const canCancel = computed(() => {
+        return isRunning.value;
+    });
 
-const canClose = computed(() => {
-    return !isRunning.value && !props.isDownloading;
-});
+    const canClose = computed(() => {
+        return !isRunning.value && !props.isDownloading;
+    });
 </script>

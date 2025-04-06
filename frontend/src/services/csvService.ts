@@ -107,7 +107,7 @@ export function aggregateMetricsByTool(data: MetricsData[]): Record<
  */
 export function getMetricStatistics(
     data: MetricsData[],
-    metricName: keyof MetricsData
+    metricName: keyof MetricsData,
 ): {
     min: number;
     max: number;

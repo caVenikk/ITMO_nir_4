@@ -1,15 +1,22 @@
-from fastapi import (APIRouter, BackgroundTasks, Depends, HTTPException,
-                     Response, status)
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.models import (CancelTaskResponse, PyPISearchResponse, TaskCreate,
-                        TaskResponse, TaskStatusResponse)
+from api.models import (
+    CancelTaskResponse,
+    PyPISearchResponse,
+    TaskCreate,
+    TaskResponse,
+    TaskStatusResponse,
+)
 from db.database import get_db
-from db.operations import (create_task, get_task_by_id,
-                           mark_metrics_downloaded, update_task_status)
+from db.operations import (
+    create_task,
+    get_task_by_id,
+    mark_metrics_downloaded,
+    update_task_status,
+)
 from services.pypi import search_pypi_packages
-from services.runner_client import (cancel_analysis, get_metrics_file,
-                                    start_analysis)
+from services.runner_client import cancel_analysis, get_metrics_file, start_analysis
 
 router = APIRouter()
 

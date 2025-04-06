@@ -1,5 +1,11 @@
 import ky from "ky";
-import type { PyPISearchResponse, TaskCreate, TaskResponse, TaskStatusResponse, CancelTaskResponse } from "@/types";
+import type {
+    PyPISearchResponse,
+    TaskCreate,
+    TaskResponse,
+    TaskStatusResponse,
+    CancelTaskResponse,
+} from "@/types";
 
 // Function to get API base URL from environment variables
 function getApiBaseUrl(): string {

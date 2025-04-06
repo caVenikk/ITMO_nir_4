@@ -30,10 +30,10 @@ const lightTheme = {
 const darkTheme = {
     dark: true,
     colors: {
-        primary: "#2196F3",
+        primary: "#9207fd",
         secondary: "#424242",
         accent: "#82B1FF",
-        error: "#FF5252",
+        error: "#fd3c34",
         info: "#2196F3",
         success: "#4CAF50",
         warning: "#FFC107",

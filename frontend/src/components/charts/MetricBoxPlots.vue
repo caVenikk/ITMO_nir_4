@@ -1,195 +1,199 @@
 <template>
-    <div class="metric-charts">
-        <h3 class="metric-charts-title">Диаграммы размаха метрик по анализаторам</h3>
+  <div class="metric-charts">
+    <h3 class="metric-charts-title">
+      Диаграммы размаха метрик по анализаторам
+    </h3>
 
-        <div class="charts-container">
-            <!-- Box plot для времени выполнения -->
-            <div class="chart-box">
-                <VueApexCharts
-                    type="boxPlot"
-                    height="350"
-                    :options="chartOptions.execution"
-                    :series="boxplotSeries.execution"
-                />
-            </div>
+    <div class="charts-container">
+      <div class="chart-box">
+        <VueApexCharts
+          type="boxPlot"
+          height="350"
+          :options="chartOptions.execution"
+          :series="boxplotSeries.execution"
+        />
+      </div>
 
-            <!-- Box plot для использования CPU -->
-            <div class="chart-box">
-                <VueApexCharts type="boxPlot" height="350" :options="chartOptions.cpu" :series="boxplotSeries.cpu" />
-            </div>
+      <div class="chart-box">
+        <VueApexCharts
+          type="boxPlot"
+          height="350"
+          :options="chartOptions.cpu"
+          :series="boxplotSeries.cpu"
+        />
+      </div>
 
-            <!-- Box plot для использования памяти -->
-            <div class="chart-box">
-                <VueApexCharts
-                    type="boxPlot"
-                    height="350"
-                    :options="chartOptions.memory"
-                    :series="boxplotSeries.memory"
-                />
-            </div>
-        </div>
+      <div class="chart-box">
+        <VueApexCharts
+          type="boxPlot"
+          height="350"
+          :options="chartOptions.memory"
+          :series="boxplotSeries.memory"
+        />
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import VueApexCharts from "vue3-apexcharts";
-import type { StatsData, MetricKey } from "@/types/metrics";
-import { CHART_COLORS } from "@/constants/chartConstants";
+    import { computed } from "vue";
+    import VueApexCharts from "vue3-apexcharts";
+    import type { StatsData, MetricKey } from "@/types/metrics";
+    import { CHART_COLORS } from "@/constants/chartConstants";
 
-const props = defineProps<{
-    statsData: StatsData;
-}>();
+    const props = defineProps<{
+        statsData: StatsData;
+    }>();
 
-// Цвета для разных анализаторов (цветовая палитра)
-const analyzerColors = CHART_COLORS;
+    const analyzerColors = CHART_COLORS;
 
-// Названия графиков
-const chartTitles: Record<MetricKey, string> = {
-    execution: "Распределение времени выполнения (с)",
-    cpu: "Распределение использования ЦП (%)",
-    memory: "Распределение использования памяти (КБ)",
-};
-
-// Конфигурация для графиков
-const chartOptions = computed(() => {
-    // Получаем названия инструментов для категорий на оси X
-    const categories = Object.keys(props.statsData);
-
-    // Находим минимальные и максимальные значения для каждой метрики
-    // для правильного масштабирования осей
-    const metricMinMax: Record<MetricKey, { min: number; max: number }> = {
-        execution: { min: Infinity, max: -Infinity },
-        cpu: { min: Infinity, max: -Infinity },
-        memory: { min: Infinity, max: -Infinity },
+    const chartTitles: Record<MetricKey, string> = {
+        execution: "Распределение времени выполнения (с)",
+        cpu: "Распределение использования ЦП (%)",
+        memory: "Распределение использования памяти (КБ)",
     };
 
-    // Находим глобальные минимумы и максимумы для каждой метрики
-    Object.values(props.statsData).forEach((toolData) => {
-        Object.entries(metricMinMax).forEach(([metric, value]) => {
-            const metricKey = metric as MetricKey;
-            metricMinMax[metricKey].min = Math.min(metricMinMax[metricKey].min, toolData[metricKey].min);
-            metricMinMax[metricKey].max = Math.max(metricMinMax[metricKey].max, toolData[metricKey].max);
+    const chartOptions = computed(() => {
+        const categories = Object.keys(props.statsData);
+
+        const metricMinMax: Record<MetricKey, { min: number; max: number }> = {
+            execution: { min: Infinity, max: -Infinity },
+            cpu: { min: Infinity, max: -Infinity },
+            memory: { min: Infinity, max: -Infinity },
+        };
+
+        Object.values(props.statsData).forEach((toolData) => {
+            Object.entries(metricMinMax).forEach(([metric, value]) => {
+                const metricKey = metric as MetricKey;
+                metricMinMax[metricKey].min = Math.min(
+                    metricMinMax[metricKey].min,
+                    toolData[metricKey].min,
+                );
+                metricMinMax[metricKey].max = Math.max(
+                    metricMinMax[metricKey].max,
+                    toolData[metricKey].max,
+                );
+            });
         });
-    });
 
-    // Добавляем отступ (gap) 10% от диапазона для каждой метрики
-    Object.keys(metricMinMax).forEach((metric) => {
-        const metricKey = metric as MetricKey;
-        const range = metricMinMax[metricKey].max - metricMinMax[metricKey].min;
-        const gap = range * 0.1; // 10% отступ
+        Object.keys(metricMinMax).forEach((metric) => {
+            const metricKey = metric as MetricKey;
+            const range = metricMinMax[metricKey].max - metricMinMax[metricKey].min;
+            const gap = range * 0.1;
 
-        // Проверка на валидность данных (во избежание Infinity)
-        if (metricMinMax[metricKey].min !== Infinity) {
-            metricMinMax[metricKey].min = Math.max(0, metricMinMax[metricKey].min - gap);
-        } else {
-            metricMinMax[metricKey].min = 0;
-        }
+            if (metricMinMax[metricKey].min !== Infinity) {
+                metricMinMax[metricKey].min = Math.max(0, metricMinMax[metricKey].min - gap);
+            } else {
+                metricMinMax[metricKey].min = 0;
+            }
 
-        if (metricMinMax[metricKey].max !== -Infinity) {
-            metricMinMax[metricKey].max = metricMinMax[metricKey].max + gap;
-        } else {
-            metricMinMax[metricKey].max = 100;
-        }
-    });
+            if (metricMinMax[metricKey].max !== -Infinity) {
+                metricMinMax[metricKey].max = metricMinMax[metricKey].max + gap;
+            } else {
+                metricMinMax[metricKey].max = 100;
+            }
+        });
 
-    const baseOptions = {
-        chart: {
-            type: "boxPlot",
-            fontFamily: "Roboto, sans-serif",
-            foreColor: "var(--v-theme-on-surface)",
-            toolbar: {
-                show: false, // Полностью отключаем панель инструментов
-            },
-            zoom: {
-                enabled: false, // Отключаем возможность зумирования
-            },
-            animations: {
-                enabled: true, // Оставляем анимации для визуальной привлекательности
-            },
-        },
-        colors: analyzerColors.slice(0, categories.length), // Используем разные цвета
-        plotOptions: {
-            boxPlot: {
-                colors: {
-                    upper: analyzerColors[0],
-                    lower: analyzerColors[0],
+        const baseOptions = {
+            chart: {
+                type: "boxPlot",
+                fontFamily: "Roboto, sans-serif",
+                foreColor: "var(--v-theme-on-surface)",
+                toolbar: {
+                    show: false,
                 },
-                fillColors: {
-                    upper: analyzerColors[0],
-                    lower: analyzerColors[0],
+                zoom: {
+                    enabled: false,
                 },
-                distributed: true, // Включаем distributed для равномерного распределения
-            },
-        },
-        stroke: {
-            width: 2, // Увеличиваем толщину линий
-            colors: ["#000"],
-        },
-        xaxis: {
-            categories,
-            title: {
-                text: "Анализаторы",
-                style: {
-                    fontSize: "14px",
-                    fontWeight: "bold",
-                    fontFamily: "Roboto, sans-serif",
-                    color: "var(--v-theme-on-surface)",
+                animations: {
+                    enabled: true,
                 },
             },
-            labels: {
-                style: {
-                    fontSize: "12px",
-                    fontFamily: "Roboto, sans-serif",
-                    colors: "var(--v-theme-on-surface)",
+            colors: analyzerColors.slice(0, categories.length),
+            plotOptions: {
+                boxPlot: {
+                    colors: {
+                        upper: analyzerColors[0],
+                        lower: analyzerColors[0],
+                    },
+                    fillColors: {
+                        upper: analyzerColors[0],
+                        lower: analyzerColors[0],
+                    },
+                    distributed: true,
                 },
             },
-        },
-        yaxis: {
-            title: {
-                style: {
-                    fontSize: "14px",
-                    fontWeight: "bold",
-                    fontFamily: "Roboto, sans-serif",
-                    color: "var(--v-theme-on-surface)",
+            stroke: {
+                width: 2,
+                colors: ["#000"],
+            },
+            xaxis: {
+                categories,
+                title: {
+                    text: "Анализаторы",
+                    style: {
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        fontFamily: "Roboto, sans-serif",
+                        color: "var(--v-theme-on-surface)",
+                    },
+                },
+                labels: {
+                    style: {
+                        fontSize: "12px",
+                        fontFamily: "Roboto, sans-serif",
+                        colors: "var(--v-theme-on-surface)",
+                    },
                 },
             },
-            min: undefined, // Будет задано динамически для каждой метрики
-            max: undefined, // Будет задано динамически для каждой метрики
-            labels: {
-                style: {
-                    fontSize: "12px",
-                    fontFamily: "Roboto, sans-serif",
-                    colors: "var(--v-theme-on-surface)",
+            yaxis: {
+                title: {
+                    style: {
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        fontFamily: "Roboto, sans-serif",
+                        color: "var(--v-theme-on-surface)",
+                    },
                 },
-                formatter: (val: number) => val.toFixed(2),
+                min: undefined,
+                max: undefined,
+                labels: {
+                    style: {
+                        fontSize: "12px",
+                        fontFamily: "Roboto, sans-serif",
+                        colors: "var(--v-theme-on-surface)",
+                    },
+                    formatter: (val: number) => val.toFixed(2),
+                },
             },
-        },
-        tooltip: {
-            shared: false,
-            intersect: true,
-            theme: "dark",
-            custom: function ({
-                seriesIndex,
-                dataPointIndex,
-                w,
-            }: {
-                seriesIndex: number;
-                dataPointIndex: number;
-                w: { config: { series: { data: { y: number[] }[] }[] }; globals: { categoryLabels: string[] } };
-            }) {
-                const data = w.config.series[seriesIndex].data[dataPointIndex];
-                const metrics = ["execution", "cpu", "memory"];
-                const metric = metrics[seriesIndex] as MetricKey;
-                const metricLabels = {
-                    execution: "Время выполнения (с)",
-                    cpu: "Использование ЦП (%)",
-                    memory: "Использование памяти (КБ)",
-                };
+            tooltip: {
+                shared: false,
+                intersect: true,
+                theme: "dark",
+                custom: function ({
+                    seriesIndex,
+                    dataPointIndex,
+                    w,
+                }: {
+                    seriesIndex: number;
+                    dataPointIndex: number;
+                    w: {
+                        config: { series: { data: { y: number[] }[] }[] };
+                        globals: { categoryLabels: string[] };
+                    };
+                }) {
+                    const data = w.config.series[seriesIndex].data[dataPointIndex];
+                    const metrics = ["execution", "cpu", "memory"];
+                    const metric = metrics[seriesIndex] as MetricKey;
+                    const metricLabels = {
+                        execution: "Время выполнения (с)",
+                        cpu: "Использование ЦП (%)",
+                        memory: "Использование памяти (КБ)",
+                    };
 
-                const toolName = w.globals.categoryLabels[dataPointIndex];
+                    const toolName = w.globals.categoryLabels[dataPointIndex];
 
-                return `
+                    return `
           <div class="apexcharts-tooltip-box">
             <div class="apexcharts-tooltip-title" style="font-weight: bold; margin-bottom: 5px; font-family: Roboto, sans-serif;">
               ${toolName} - ${metricLabels[metric]}
@@ -201,231 +205,228 @@ const chartOptions = computed(() => {
               <span><strong>Q3:</strong> ${data.y[3].toFixed(2)}</span><br/>
               <span><strong>Максимум:</strong> ${data.y[4].toFixed(2)}</span><br/>
               <span><strong>Среднее:</strong> ${
-                  props.statsData[toolName] ? props.statsData[toolName][metric].mean.toFixed(2) : "0.00"
+                  props.statsData[toolName]
+                      ? props.statsData[toolName][metric].mean.toFixed(2)
+                      : "0.00"
               }</span>
             </div>
           </div>
         `;
+                },
             },
-        },
-        legend: {
-            labels: {
-                colors: "var(--v-theme-on-surface)",
-                useSeriesColors: false,
-                fontFamily: "Roboto, sans-serif",
+            legend: {
+                labels: {
+                    colors: "var(--v-theme-on-surface)",
+                    useSeriesColors: false,
+                    fontFamily: "Roboto, sans-serif",
+                },
             },
-        },
-        title: {
-            style: {
-                fontSize: "16px",
-                fontWeight: "bold",
-                fontFamily: "Roboto, sans-serif",
-                color: "var(--v-theme-on-surface)",
+            title: {
+                style: {
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    fontFamily: "Roboto, sans-serif",
+                    color: "var(--v-theme-on-surface)",
+                },
             },
-        },
-        responsive: [
-            {
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        height: 300,
+            responsive: [
+                {
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            height: 300,
+                        },
+                    },
+                },
+            ],
+            dataLabels: {
+                enabled: false,
+            },
+            states: {
+                hover: {
+                    filter: { type: "none" },
+                },
+                active: {
+                    filter: { type: "none" },
+                },
+            },
+        };
+
+        return {
+            execution: {
+                ...baseOptions,
+                title: {
+                    text: chartTitles.execution,
+                    align: "center",
+                    style: {
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        fontFamily: "Roboto, sans-serif",
+                    },
+                },
+                yaxis: {
+                    ...baseOptions.yaxis,
+                    min: metricMinMax.execution.min,
+                    max: metricMinMax.execution.max,
+                    title: {
+                        text: "Секунды",
+                        ...baseOptions.yaxis.title,
                     },
                 },
             },
-        ],
-        dataLabels: {
-            enabled: false, // Отключаем метки данных
-        },
-        states: {
-            hover: {
-                filter: { type: "none" }, // Отключаем эффект при наведении
-            },
-            active: {
-                filter: { type: "none" }, // Отключаем эффект при активации
-            },
-        },
-    };
-
-    return {
-        execution: {
-            ...baseOptions,
-            title: {
-                text: chartTitles.execution,
-                align: "center",
-                style: {
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    fontFamily: "Roboto, sans-serif",
-                },
-            },
-            yaxis: {
-                ...baseOptions.yaxis,
-                min: metricMinMax.execution.min,
-                max: metricMinMax.execution.max,
+            cpu: {
+                ...baseOptions,
                 title: {
-                    text: "Секунды",
-                    ...baseOptions.yaxis.title,
+                    text: chartTitles.cpu,
+                    align: "center",
+                    style: {
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        fontFamily: "Roboto, sans-serif",
+                    },
+                },
+                yaxis: {
+                    ...baseOptions.yaxis,
+                    min: metricMinMax.cpu.min,
+                    max: metricMinMax.cpu.max,
+                    title: {
+                        text: "Проценты (%)",
+                        ...baseOptions.yaxis.title,
+                    },
                 },
             },
-        },
-        cpu: {
-            ...baseOptions,
-            title: {
-                text: chartTitles.cpu,
-                align: "center",
-                style: {
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    fontFamily: "Roboto, sans-serif",
-                },
-            },
-            yaxis: {
-                ...baseOptions.yaxis,
-                min: metricMinMax.cpu.min,
-                max: metricMinMax.cpu.max,
+            memory: {
+                ...baseOptions,
                 title: {
-                    text: "Проценты (%)",
-                    ...baseOptions.yaxis.title,
+                    text: chartTitles.memory,
+                    align: "center",
+                    style: {
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        fontFamily: "Roboto, sans-serif",
+                    },
+                },
+                yaxis: {
+                    ...baseOptions.yaxis,
+                    min: metricMinMax.memory.min,
+                    max: metricMinMax.memory.max,
+                    title: {
+                        text: "Килобайты (КБ)",
+                        ...baseOptions.yaxis.title,
+                    },
+                    forceNiceScale: true,
                 },
             },
-        },
-        memory: {
-            ...baseOptions,
-            title: {
-                text: chartTitles.memory,
-                align: "center",
-                style: {
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    fontFamily: "Roboto, sans-serif",
-                },
-            },
-            yaxis: {
-                ...baseOptions.yaxis,
-                min: metricMinMax.memory.min,
-                max: metricMinMax.memory.max,
-                title: {
-                    text: "Килобайты (КБ)",
-                    ...baseOptions.yaxis.title,
-                },
-                forceNiceScale: true,
-            },
-        },
-    };
-});
-
-// Данные серий для графиков
-const boxplotSeries = computed(() => {
-    // Если данных нет - возвращаем пустые серии
-    if (Object.keys(props.statsData).length === 0) {
-        return {
-            execution: [],
-            cpu: [],
-            memory: [],
         };
-    }
+    });
 
-    // Создаем серии для каждой метрики
-    const getSeriesForMetric = (metricKey: MetricKey) => {
-        return [
-            {
-                name: "Analyzers",
-                data: Object.entries(props.statsData).map(([toolName, toolData], index) => {
-                    return {
-                        x: toolName,
-                        y: [
-                            toolData[metricKey].min,
-                            toolData[metricKey].q1,
-                            toolData[metricKey].median,
-                            toolData[metricKey].q3,
-                            toolData[metricKey].max,
-                        ],
-                        fillColor: analyzerColors[index % analyzerColors.length], // Устанавливаем цвет заполнения
-                        color: analyzerColors[index % analyzerColors.length], // Устанавливаем цвет линий
-                    };
-                }),
-            },
-        ];
-    };
+    const boxplotSeries = computed(() => {
+        if (Object.keys(props.statsData).length === 0) {
+            return {
+                execution: [],
+                cpu: [],
+                memory: [],
+            };
+        }
 
-    return {
-        execution: getSeriesForMetric("execution"),
-        cpu: getSeriesForMetric("cpu"),
-        memory: getSeriesForMetric("memory"),
-    };
-});
+        const getSeriesForMetric = (metricKey: MetricKey) => {
+            return [
+                {
+                    name: "Analyzers",
+                    data: Object.entries(props.statsData).map(([toolName, toolData], index) => {
+                        return {
+                            x: toolName,
+                            y: [
+                                toolData[metricKey].min,
+                                toolData[metricKey].q1,
+                                toolData[metricKey].median,
+                                toolData[metricKey].q3,
+                                toolData[metricKey].max,
+                            ],
+                            fillColor: analyzerColors[index % analyzerColors.length],
+                            color: analyzerColors[index % analyzerColors.length],
+                        };
+                    }),
+                },
+            ];
+        };
+
+        return {
+            execution: getSeriesForMetric("execution"),
+            cpu: getSeriesForMetric("cpu"),
+            memory: getSeriesForMetric("memory"),
+        };
+    });
 </script>
 
 <style scoped lang="scss">
-.metric-charts {
-    width: 100%;
-    margin-bottom: 3rem;
-
-    &-title {
-        font-size: 1.5rem;
-        margin-bottom: 1.5rem;
-        text-align: center;
-    }
-
-    .charts-container {
-        display: flex;
-        flex-direction: column;
-        gap: 3rem;
+    .metric-charts {
         width: 100%;
+        margin-bottom: 3rem;
 
-        .chart-box {
-            border-radius: 8px;
-            padding: 1.5rem;
-            background-color: rgba(var(--v-theme-surface-variant), 0.2);
-            border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        &-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
 
-            h4 {
-                text-align: center;
-                margin-bottom: 1rem;
-                font-size: 1.2rem;
-                font-weight: 500;
+        .charts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            width: 100%;
+
+            .chart-box {
+                border-radius: 8px;
+                padding: 1.5rem;
+                background-color: rgba(var(--v-theme-surface-variant), 0.2);
+                border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+                h4 {
+                    text-align: center;
+                    margin-bottom: 1rem;
+                    font-size: 1.2rem;
+                    font-weight: 500;
+                }
             }
         }
     }
-}
 
-@media (max-width: 768px) {
-    .metric-charts .charts-container .chart-box {
-        padding: 1rem;
-        overflow-x: auto;
-    }
-}
-
-// Стили для кастомного тултипа
-:deep(.apexcharts-tooltip-box) {
-    padding: 8px 12px;
-    font-size: 0.85rem;
-    line-height: 1.4;
-}
-
-:deep(.apexcharts-toolbar) {
-    z-index: 5;
-    .apexcharts-menu {
-        background-color: var(--v-theme-surface);
-        border-color: var(--v-theme-outline);
-        border-radius: 4px;
-        font-family: "Roboto, sans-serif";
-
-        .apexcharts-menu-item {
-            font-family: "Roboto, sans-serif";
+    @media (max-width: 768px) {
+        .metric-charts .charts-container .chart-box {
+            padding: 1rem;
+            overflow-x: auto;
         }
     }
-}
 
-// Улучшаем видимость элементов box plot
-:deep(.apexcharts-boxPlot-series) {
-    stroke-width: 2px;
-    .apexcharts-boxPlot-whisker {
+    :deep(.apexcharts-tooltip-box) {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    :deep(.apexcharts-toolbar) {
+        z-index: 5;
+        .apexcharts-menu {
+            background-color: var(--v-theme-surface);
+            border-color: var(--v-theme-outline);
+            border-radius: 4px;
+            font-family: "Roboto, sans-serif";
+
+            .apexcharts-menu-item {
+                font-family: "Roboto, sans-serif";
+            }
+        }
+    }
+
+    :deep(.apexcharts-boxPlot-series) {
         stroke-width: 2px;
+        .apexcharts-boxPlot-whisker {
+            stroke-width: 2px;
+        }
+        .apexcharts-boxPlot-box {
+            stroke-width: 1.5px;
+        }
     }
-    .apexcharts-boxPlot-box {
-        stroke-width: 1.5px;
-    }
-}
 </style>

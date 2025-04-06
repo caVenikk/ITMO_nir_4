@@ -1,0 +1,47 @@
+// Глобальные стили для мобильных устройств
+.mobile-responsive {
+    @media (max-width: 600px) {
+        flex-direction: column !important;
+
+        .v-col {
+            padding: 4px !important;
+            flex-basis: 100% !important;
+            max-width: 100% !important;
+        }
+    }
+}
+
+// Улучшенная читаемость текста на маленьких экранах
+@media (max-width: 600px) {
+    .text-mobile-body-1 {
+        font-size: 0.875rem !important;
+        line-height: 1.25rem !important;
+    }
+
+    .text-mobile-caption {
+        font-size: 0.75rem !important;
+        line-height: 1rem !important;
+    }
+
+    // Уменьшение отступов для контейнеров на мобильных устройствах
+    .v-container {
+        padding: 12px !important;
+    }
+
+    // Улучшенное отображение кнопок на мобильных устройствах
+    .v-btn {
+        min-width: unset !important;
+        padding: 0 12px !important;
+    }
+
+    // Улучшение для таблиц на мобильных устройствах
+    .v-table {
+        overflow-x: auto !important;
+
+        th,
+        td {
+            white-space: nowrap;
+            padding: 0 8px !important;
+        }
+    }
+}
