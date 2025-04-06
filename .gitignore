@@ -1,0 +1,55 @@
+# Python виртуальные окружения
+.venv
+venv
+env
+virtualenv
+
+# Python кеш и компилированные файлы
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Кеш инструментов статического анализа
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Логи
+*.log
+logs/
+
+# Файлы окружения
+.env
+.env.*
+!.env.example
+
+# Файлы баз данных
+*.db
+*.sqlite
+*.sqlite3
+
+# Директории дистрибутивов
+dist/
+build/
+*.egg-info/
+
+# Файлы IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Файлы ОС
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Docker
+.docker/
+.dockerignore

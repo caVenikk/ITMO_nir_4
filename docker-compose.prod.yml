@@ -1,0 +1,51 @@
+services:
+    api:
+        build:
+            context: ./api_service
+            dockerfile: Dockerfile
+        ports:
+            - "8000:8000"
+        volumes:
+            - ./api_service:/app
+        environment:
+            - ENV=production
+        networks:
+            - analyzer-network
+        restart: always
+        depends_on:
+            - runner
+
+    runner:
+        build:
+            context: ./runner_service
+            dockerfile: Dockerfile
+        expose:
+            - "8080"
+        volumes:
+            - ./runner_service:/app
+            - /var/run/docker.sock:/var/run/docker.sock
+        environment:
+            - ENV=production
+        networks:
+            - analyzer-network
+        privileged: true
+        restart: always
+
+    frontend:
+        build:
+            context: ./frontend
+            args:
+                - VITE_ENV=production
+        ports:
+            - "3000:80"
+        env_file:
+            - ./frontend/.env.production
+        depends_on:
+            - api
+        networks:
+            - analyzer-network
+        restart: always
+
+networks:
+    analyzer-network:
+        driver: bridge

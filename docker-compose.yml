@@ -1,0 +1,48 @@
+services:
+    api:
+        build:
+            context: ./api_service
+            dockerfile: Dockerfile
+        ports:
+            - "8000:8000"
+        volumes:
+            - ./api_service:/app
+        environment:
+            - ENV=development # Используем development среду по умолчанию
+        networks:
+            - analyzer-network
+        depends_on:
+            - runner
+
+    runner:
+        build:
+            context: ./runner_service
+            dockerfile: Dockerfile
+        expose:
+            - "8080"
+        volumes:
+            - ./runner_service:/app
+            - /var/run/docker.sock:/var/run/docker.sock # Для возможности запуска Docker внутри контейнера
+        environment:
+            - ENV=development # Используем development среду по умолчанию
+        networks:
+            - analyzer-network
+        privileged: true # Для системных операций (установка пакетов, запуск Go)
+
+    frontend:
+        build:
+            context: ./frontend
+            args:
+                - VITE_ENV=development
+        ports:
+            - "3000:80"
+        env_file:
+            - ./frontend/.env.development
+        depends_on:
+            - api
+        networks:
+            - analyzer-network
+
+networks:
+    analyzer-network:
+        driver: bridge

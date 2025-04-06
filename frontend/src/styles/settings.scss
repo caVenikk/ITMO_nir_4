@@ -1,0 +1,90 @@
+/**
+ * src/styles/settings.scss
+ *
+ * Configures SASS variables and Vuetify overwrites
+ */
+
+// https://vuetifyjs.com/features/sass-variables/`
+// @use 'vuetify/settings' with (
+//   $color-pack: false
+// );
+
+/* Стили для ApexCharts, чтобы текст был виден в темной и светлой темах */
+.apexcharts-text tspan,
+.apexcharts-title-text,
+.apexcharts-legend-text,
+.apexcharts-yaxis-title,
+.apexcharts-xaxis-title,
+.apexcharts-yaxis-label,
+.apexcharts-xaxis-label,
+.apexcharts-tooltip-title,
+.apexcharts-menu-item {
+    fill: currentColor !important;
+    color: currentColor !important;
+    font-family: Roboto, sans-serif !important;
+}
+
+/* Стилизация выпадающего меню */
+.apexcharts-menu {
+    background-color: var(--v-theme-surface) !important;
+    border: 1px solid var(--v-theme-outline) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 4px !important;
+    padding: 6px 0 !important;
+    min-width: 150px !important;
+}
+
+.apexcharts-menu-item {
+    font-family: Roboto, sans-serif !important;
+    font-size: 13px !important;
+    padding: 8px 12px !important;
+    color: var(--v-theme-on-surface) !important;
+}
+
+.apexcharts-menu-item:hover {
+    background-color: var(--v-theme-surface-variant) !important;
+}
+
+/* Исправление для меню инструментов */
+.apexcharts-toolbar {
+    z-index: 12 !important;
+}
+
+/* Скрываем все кнопки кроме бургер-меню */
+.apexcharts-toolbar .apexcharts-zoom-in-icon,
+.apexcharts-toolbar .apexcharts-zoom-out-icon,
+.apexcharts-toolbar .apexcharts-zoom-icon,
+.apexcharts-toolbar .apexcharts-pan-icon,
+.apexcharts-toolbar .apexcharts-reset-icon,
+.apexcharts-toolbar .apexcharts-selection-icon,
+.apexcharts-toolbar .apexcharts-download-icon {
+    display: none !important;
+}
+
+/* Стилизация бургер-меню */
+.apexcharts-toolbar .apexcharts-menu-icon {
+    background-color: var(--v-theme-surface) !important;
+    border: 1px solid var(--v-theme-outline) !important;
+    border-radius: 4px !important;
+    padding: 5px 3px !important;
+    margin-right: 5px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Исправление для текста на осях */
+.apexcharts-xaxis text,
+.apexcharts-yaxis text {
+    font-family: Roboto, sans-serif !important;
+    font-size: 12px !important;
+    fill: var(--v-theme-on-surface) !important;
+}
+
+/* Улучшение для боксплотов */
+.apexcharts-boxPlot-series .apexcharts-boxPlot-whisker,
+.apexcharts-boxPlot-series .apexcharts-boxPlot-box {
+    stroke-width: 2px !important;
+}
+
+.apexcharts-boxPlot-series .apexcharts-boxPlot-median {
+    stroke-width: 2.5px !important;
+}

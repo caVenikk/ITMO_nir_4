@@ -1,0 +1,64 @@
+# Python виртуальные окружения
+.venv/
+venv/
+env/
+ENV/
+
+# Python кеш и компилированные файлы
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Скомпилированный Go-код
+metrics_collector
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Временные директории Go
+/go.work
+
+# Файлы окружения (но сохраняем примеры)
+.env
+.env.*
+!.env.example
+!.env.development
+!.env.production
+
+# Директории для данных
+data/
+repos/
+metrics/
+
+# Логи
+*.log
+logs/
+
+# Кеш инструментов статического анализа
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Дистрибутивы
+dist/
+build/
+*.egg-info/
+
+# Временные файлы
+.temp/
+.tmp/
+tmp/
+
+# Артефакты Docker
+.docker/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
