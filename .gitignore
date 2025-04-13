@@ -27,6 +27,8 @@ logs/
 .env.*
 !.env.example
 
+*.local
+
 # Файлы баз данных
 *.db
 *.sqlite
