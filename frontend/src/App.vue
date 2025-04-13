@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <v-app-bar color="primary" app>
-            <span class="app-title">Анализ производительности статических анализаторов кода 111</span>
+            <span class="app-title">Анализ производительности статических анализаторов кода</span>
             <v-spacer />
             <v-btn icon href="https://github.com/caVenikk/ITMO_nir_4" target="_blank">
                 <v-icon>mdi-github</v-icon>
