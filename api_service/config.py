@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     request_timeout: int = 30
 
     model_config = SettingsConfigDict(
-        env_file=".env.development" if os.environ.get("ENV") != "production" else ".env.production",
+        env_file=".env.development.local" if os.environ.get("ENV") != "production" else ".env.production.local",
         env_file_encoding="utf-8",
         extra="ignore",
     )
