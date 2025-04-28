@@ -6,20 +6,20 @@
             <div class="chart-box">
                 <VueApexCharts
                     type="boxPlot"
-                    height="350"
+                    height="700"
                     :options="chartOptions.execution"
                     :series="boxplotSeries.execution"
                 />
             </div>
 
             <div class="chart-box">
-                <VueApexCharts type="boxPlot" height="350" :options="chartOptions.cpu" :series="boxplotSeries.cpu" />
+                <VueApexCharts type="boxPlot" height="700" :options="chartOptions.cpu" :series="boxplotSeries.cpu" />
             </div>
 
             <div class="chart-box">
                 <VueApexCharts
                     type="boxPlot"
-                    height="350"
+                    height="700"
                     :options="chartOptions.memory"
                     :series="boxplotSeries.memory"
                 />
