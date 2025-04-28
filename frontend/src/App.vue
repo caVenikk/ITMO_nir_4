@@ -3,7 +3,12 @@
         <v-app-bar color="primary" app>
             <span class="app-title">Анализ производительности статических анализаторов кода</span>
             <v-spacer />
-            <v-btn icon href="https://github.com/caVenikk/ITMO_nir_4" target="_blank">
+            <v-btn
+                icon
+                href="https://github.com/caVenikk/ITMO_nir_4"
+                target="_blank"
+                aria-label="Посетить репозиторий GitHub проекта"
+            >
                 <v-icon>mdi-github</v-icon>
             </v-btn>
         </v-app-bar>
