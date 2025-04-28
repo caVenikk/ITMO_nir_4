@@ -33,7 +33,7 @@ async def start_analysis_task(
     """
     try:
         # Определяем, является ли анализатор стандартным
-        standard_analyzers = ["ruff", "black", "flake8"]
+        standard_analyzers = ["ruff", "mypy", "flake8"]
         is_standard_analyzer = analyzer_name in standard_analyzers
 
         # Шаг 1: Установка анализатора, если он не является стандартным
@@ -66,9 +66,7 @@ async def start_analysis_task(
             return
 
         # Шаг 3: Запуск анализаторов и сбор метрик
-        logger.info(
-            f"Запуск анализаторов на репозитории {repository_url} с {iterations} итерациями"
-        )
+        logger.info(f"Запуск анализаторов на репозитории {repository_url} с {iterations} итерациями")
         logger.info(f"Используемый шаблон команды: {command_template}")
         metrics_file_path = os.path.join(settings.metrics_dir, f"metrics_{task_id}.csv")
 
@@ -111,18 +109,11 @@ async def start_analysis_task(
                 active_tasks[task_id]["process"] = proc
 
             try:
-                stdout, stderr = await asyncio.wait_for(
-                    proc.communicate(), timeout=settings.analyze_timeout
-                )
+                stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=settings.analyze_timeout)
 
                 # Задача могла быть отменена пока мы ждали
-                if (
-                    task_id in active_tasks
-                    and active_tasks[task_id].get("status") == "cancelled"
-                ):
-                    logger.info(
-                        f"Задача {task_id} была отменена, пропускаем обработку результатов"
-                    )
+                if task_id in active_tasks and active_tasks[task_id].get("status") == "cancelled":
+                    logger.info(f"Задача {task_id} была отменена, пропускаем обработку результатов")
                     return
 
                 stdout_text = stdout.decode("utf-8") if stdout else ""
@@ -154,9 +145,7 @@ async def start_analysis_task(
                     )
 
                 # Обновляем статус задачи
-                await api_client.update_task_status(
-                    task_id=task_id, status="completed", metrics_file=metrics_file_path
-                )
+                await api_client.update_task_status(task_id=task_id, status="completed", metrics_file=metrics_file_path)
                 logger.info(f"Анализ для задачи {task_id} успешно завершен")
 
             except asyncio.TimeoutError:
@@ -179,15 +168,11 @@ async def start_analysis_task(
                 status="failed",
                 error=f"Error during analysis: {str(e)}",
             )
-            logger.error(
-                f"Ошибка при выполнении анализа для задачи {task_id}: {str(e)}"
-            )
+            logger.error(f"Ошибка при выполнении анализа для задачи {task_id}: {str(e)}")
 
     except Exception as e:
         # Обрабатываем любые исключения
-        await api_client.update_task_status(
-            task_id=task_id, status="failed", error=f"Unexpected error: {str(e)}"
-        )
+        await api_client.update_task_status(task_id=task_id, status="failed", error=f"Unexpected error: {str(e)}")
         logger.error(f"Неожиданная ошибка при выполнении задачи {task_id}: {str(e)}")
     finally:
         # Удаляем задачу из активных
@@ -233,9 +218,7 @@ async def cancel_task(task_id: str, active_tasks: Dict[str, Dict[str, Any]]) -> 
             proc.kill()
 
         # Уведомляем API сервис об отмене
-        await api_client.update_task_status(
-            task_id=task_id, status="cancelled", error="Task cancelled by user request"
-        )
+        await api_client.update_task_status(task_id=task_id, status="cancelled", error="Task cancelled by user request")
 
         # Удаляем процесс из словаря
         task_info["process"] = None
@@ -262,7 +245,7 @@ async def cleanup_task(task_id: str, analyzer_name: Optional[str] = None) -> Non
 
     try:
         # Удаляем пакет анализатора, если имя предоставлено и это не стандартный анализатор
-        if analyzer_name and analyzer_name not in ["ruff", "black", "flake8"]:
+        if analyzer_name and analyzer_name not in ["ruff", "mypy", "flake8"]:
             await uninstall_package(analyzer_name)
 
         # Удаляем репозиторий
@@ -280,6 +263,4 @@ async def cleanup_task(task_id: str, analyzer_name: Optional[str] = None) -> Non
 
     except Exception as e:
         logger.error(f"Ошибка при очистке ресурсов для задачи {task_id}: {str(e)}")
-        await api_client.update_task_status(
-            task_id=task_id, status="cleanup_failed", error=f"Cleanup failed: {str(e)}"
-        )
+        await api_client.update_task_status(task_id=task_id, status="cleanup_failed", error=f"Cleanup failed: {str(e)}")

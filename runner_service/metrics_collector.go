@@ -37,7 +37,7 @@ type ToolResult struct {
 var standardTools = []Tool{
 	{Name: "flake8", Command: []string{"flake8"}, Weight: 1, TargetArg: 1},
 	{Name: "ruff", Command: []string{"ruff", "check"}, Weight: 1, TargetArg: 2},
-	{Name: "black", Command: []string{"black", "--check"}, Weight: 1, TargetArg: 1},
+	{Name: "mypy", Command: []string{"mypy"}, Weight: 1, TargetArg: 1},
 }
 
 // Регулярные выражения для извлечения метрик

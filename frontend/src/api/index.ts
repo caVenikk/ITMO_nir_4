@@ -1,14 +1,9 @@
 import ky from "ky";
-import type {
-    PyPISearchResponse,
-    TaskCreate,
-    TaskResponse,
-    TaskStatusResponse,
-    CancelTaskResponse,
-} from "@/types";
+import type { PyPISearchResponse, TaskCreate, TaskResponse, TaskStatusResponse, CancelTaskResponse } from "@/types";
 
 // Function to get API base URL from environment variables
 function getApiBaseUrl(): string {
+    console.log("VITE_API_URL", import.meta.env.VITE_API_URL);
     // Try to access environment variables in different ways
     return (
         process.env.VITE_API_URL ||

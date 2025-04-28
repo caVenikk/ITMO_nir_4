@@ -23,7 +23,7 @@ async def install_package(package_name: str) -> Tuple[bool, Optional[str]]:
             - Сообщение об ошибке (если неуспешно)
     """
     # Пропускаем установку для стандартных анализаторов
-    standard_analyzers = ["ruff", "black", "flake8"]
+    standard_analyzers = ["ruff", "mypy", "flake8"]
     if package_name in standard_analyzers:
         logger.info(f"Пакет {package_name} уже предустановлен, пропускаем установку")
         return True, None
@@ -45,11 +45,7 @@ async def install_package(package_name: str) -> Tuple[bool, Optional[str]]:
         stdout, stderr = await proc.communicate()
 
         if proc.returncode != 0:
-            error_msg = (
-                stderr.decode()
-                if stderr
-                else "Unknown error during package installation"
-            )
+            error_msg = stderr.decode() if stderr else "Unknown error during package installation"
             logger.error(f"Ошибка при установке пакета {package_name}: {error_msg}")
             return False, error_msg
 
@@ -89,11 +85,7 @@ async def uninstall_package(package_name: str) -> bool:
         stdout, stderr = await proc.communicate()
 
         if proc.returncode != 0:
-            error_msg = (
-                stderr.decode()
-                if stderr
-                else "Unknown error during package uninstallation"
-            )
+            error_msg = stderr.decode() if stderr else "Unknown error during package uninstallation"
             logger.error(f"Ошибка при удалении пакета {package_name}: {error_msg}")
             return False
 

@@ -19,7 +19,7 @@ ENV PATH=$PATH:/usr/local/go/bin
 
 WORKDIR /app
 
-RUN pip3 install ruff black flake8
+RUN pip3 install ruff mypy flake8
 
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
